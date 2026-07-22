@@ -10,12 +10,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "SQL-focused train reservation system",
+  "description": "SQL-focused MySQL train reservation system",
   "dependencies": {
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
-    "pg": "^8.22.0"
+    "mysql2": "^3.23.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
