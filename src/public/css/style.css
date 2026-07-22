@@ -1,0 +1,254 @@
+﻿:root {
+    --primary: #0b4f6c;
+    --secondary: #12355b;
+    --accent: #ffb703;
+    --light-background: #f5f8fb;
+    --text-dark: #17212b;
+    --border-color: #dfe7ef;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    background: var(--light-background);
+    color: var(--text-dark);
+    font-family: Arial, Helvetica, sans-serif;
+}
+.navbar {
+    background: linear-gradient(
+        90deg,
+        var(--secondary),
+        var(--primary)
+    );
+    padding: 1rem 0;
+}
+.navbar-brand {
+    font-size: 1.4rem;
+}
+.hero-section {
+    background:
+        linear-gradient(
+            120deg,
+            rgba(18, 53, 91, 0.98),
+            rgba(11, 79, 108, 0.92)
+        );
+    color: white;
+    overflow: hidden;
+}
+.min-vh-75 {
+    min-height: 75vh;
+}
+.hero-badge,
+.section-label {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+.hero-badge {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 2rem;
+    padding: 0.55rem 1rem;
+}
+.highlight-text {
+    color: var(--accent);
+}
+.hero-description {
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 650px;
+    margin: 1.4rem 0 2rem;
+}
+.hero-card {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1.25rem;
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    backdrop-filter: blur(12px);
+}
+.hero-card small {
+    color: rgba(255, 255, 255, 0.7);
+}
+.hero-train-icon {
+    color: var(--accent);
+    font-size: 2rem;
+}
+.route-line {
+    align-items: center;
+    display: flex;
+    margin-bottom: 2rem;
+}
+.route-point {
+    background: white;
+    border: 4px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+}
+.route-point.active {
+    background: var(--accent);
+}
+.route-track {
+    background: rgba(255, 255, 255, 0.45);
+    flex: 1;
+    height: 3px;
+}
+.search-section {
+    margin-top: -45px;
+    position: relative;
+    z-index: 5;
+}
+.search-card,
+.pnr-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 1.2rem;
+    box-shadow: 0 1rem 3rem rgba(25, 55, 85, 0.1);
+    padding: 2rem;
+}
+.section-label {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+.form-control,
+.form-select,
+.input-group-text {
+    min-height: 48px;
+}
+.train-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    box-shadow: 0 0.75rem 2rem rgba(20, 55, 85, 0.08);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+.train-card-header {
+    align-items: center;
+    background: #f8fbfd;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+}
+.train-card-body {
+    padding: 1.4rem;
+}
+.train-number {
+    background: var(--primary);
+    border-radius: 0.4rem;
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+}
+.journey-stop strong {
+    display: block;
+    font-size: 1.1rem;
+}
+.journey-line {
+    border-top: 2px dashed #a8bac8;
+    flex: 1;
+    margin: 0 1rem;
+    position: relative;
+}
+.journey-line::after {
+    background: var(--primary);
+    border-radius: 50%;
+    content: "";
+    height: 8px;
+    position: absolute;
+    right: -1px;
+    top: -5px;
+    width: 8px;
+}
+.availability-panel {
+    background: #f6fafc;
+    border-radius: 0.75rem;
+    margin-top: 1rem;
+    padding: 1rem;
+}
+.seat-badge {
+    background: white;
+    border: 1px solid #b9ccd9;
+    border-radius: 0.5rem;
+    display: inline-block;
+    font-size: 0.82rem;
+    margin: 0.25rem;
+    padding: 0.45rem 0.65rem;
+}
+.pnr-section {
+    background: white;
+}
+.pnr-summary {
+    background: #f7fafc;
+    border-radius: 0.9rem;
+    padding: 1.25rem;
+}
+.status-confirmed {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+.status-cancelled {
+    background: #f8d7da;
+    color: #842029;
+}
+.status-waiting {
+    background: #fff3cd;
+    color: #664d03;
+}
+.status-badge {
+    border-radius: 2rem;
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 0.75rem;
+}
+.feature-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: transform 0.2s ease;
+}
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+.feature-icon {
+    color: var(--primary);
+    display: block;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+.footer {
+    background: var(--secondary);
+    color: rgba(255, 255, 255, 0.75);
+}
+.loading-spinner {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    padding: 2rem;
+}
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 3rem 0;
+    }
+    .search-section {
+        margin-top: 0;
+    }
+    .search-card,
+    .pnr-card {
+        padding: 1.25rem;
+    }
+    .journey-line {
+        margin: 1rem 0;
+        width: 100%;
+    }
+    .journey-layout {
+        align-items: flex-start !important;
+        flex-direction: column;
+    }
+}

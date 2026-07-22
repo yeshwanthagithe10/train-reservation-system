@@ -1,0 +1,533 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title><%= title %> | Train Reservation</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-train-front-fill me-2"></i>
+                RailReserve
+            </a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div
+                class="collapse navbar-collapse"
+                id="mainNavigation"
+            >
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            href="#search-section"
+                        >
+                            Search Trains
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            href="#pnr-section"
+                        >
+                            PNR Status
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            href="#features-section"
+                        >
+                            Features
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-7">
+                    <span class="hero-badge">
+                        SQL-focused reservation platform
+                    </span>
+                    <h1 class="display-4 fw-bold mt-3">
+                        Book smarter across every
+                        <span class="highlight-text">
+                            journey segment
+                        </span>
+                    </h1>
+                    <p class="lead hero-description">
+                        Search trains, check live segment-based
+                        seat availability, reserve seats and track
+                        your booking using a PNR.
+                    </p>
+                    <a
+                        href="#search-section"
+                        class="btn btn-warning btn-lg px-4"
+                    >
+                        <i class="bi bi-search me-2"></i>
+                        Search Trains
+                    </a>
+                </div>
+                <div class="col-lg-5 mt-5 mt-lg-0">
+                    <div class="hero-card">
+                        <div class="route-line">
+                            <div class="route-point active"></div>
+                            <div class="route-track"></div>
+                            <div class="route-point"></div>
+                        </div>
+                        <div
+                            class="d-flex justify-content-between"
+                        >
+                            <div>
+                                <small>Departure</small>
+                                <h5>Hyderabad</h5>
+                            </div>
+                            <i
+                                class="bi bi-train-front-fill hero-train-icon"
+                            ></i>
+                            <div class="text-end">
+                                <small>Destination</small>
+                                <h5>New Delhi</h5>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <strong>13</strong>
+                                <small class="d-block">
+                                    SQL Tables
+                                </small>
+                            </div>
+                            <div class="col-4">
+                                <strong>Safe</strong>
+                                <small class="d-block">
+                                    Transactions
+                                </small>
+                            </div>
+                            <div class="col-4">
+                                <strong>Live</strong>
+                                <small class="d-block">
+                                    Availability
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section
+            id="search-section"
+            class="search-section py-5"
+        >
+            <div class="container">
+                <div class="section-heading text-center mb-4">
+                    <span class="section-label">
+                        Plan your journey
+                    </span>
+                    <h2 class="fw-bold">
+                        Search available trains
+                    </h2>
+                </div>
+                <div class="search-card">
+                    <form id="train-search-form">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-lg-3 col-md-6">
+                                <label
+                                    for="source"
+                                    class="form-label"
+                                >
+                                    From station
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-geo-alt"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        id="source"
+                                        class="form-control"
+                                        list="station-list"
+                                        placeholder="Example: HYB"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <label
+                                    for="destination"
+                                    class="form-label"
+                                >
+                                    To station
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        id="destination"
+                                        class="form-control"
+                                        list="station-list"
+                                        placeholder="Example: NDLS"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <label
+                                    for="journey-date"
+                                    class="form-label"
+                                >
+                                    Journey date
+                                </label>
+                                <input
+                                    type="date"
+                                    id="journey-date"
+                                    class="form-control"
+                                    required
+                                >
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100"
+                                >
+                                    <i class="bi bi-search me-2"></i>
+                                    Search Trains
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <datalist id="station-list">
+                        <option value="HYB">
+                            Hyderabad Deccan
+                        </option>
+                        <option value="KZJ">
+                            Kazipet Junction
+                        </option>
+                        <option value="NGP">
+                            Nagpur Junction
+                        </option>
+                        <option value="BPL">
+                            Bhopal Junction
+                        </option>
+                        <option value="NDLS">
+                            New Delhi
+                        </option>
+                    </datalist>
+                </div>
+                <div
+                    id="search-message"
+                    class="mt-4"
+                ></div>
+                <div
+                    id="train-results"
+                    class="mt-4"
+                ></div>
+            </div>
+        </section>
+        <section
+            id="pnr-section"
+            class="pnr-section py-5"
+        >
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-5">
+                        <span class="section-label">
+                            Manage your journey
+                        </span>
+                        <h2 class="fw-bold">
+                            Check your PNR status
+                        </h2>
+                        <p class="text-muted">
+                            View passenger details, coach and seat
+                            allocation, booking status and complete
+                            status history.
+                        </p>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="pnr-card">
+                            <form id="pnr-form">
+                                <div class="row g-3">
+                                    <div class="col-md-7">
+                                        <label
+                                            for="pnr-number"
+                                            class="form-label"
+                                        >
+                                            PNR number
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="pnr-number"
+                                            class="form-control"
+                                            placeholder="Enter your PNR"
+                                            maxlength="20"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label
+                                            for="pnr-user-id"
+                                            class="form-label"
+                                        >
+                                            User ID
+                                        </label>
+                                        <input
+                                            type="number"
+                                            id="pnr-user-id"
+                                            class="form-control"
+                                            value="1"
+                                            min="1"
+                                            required
+                                        >
+                                    </div>
+                                    <div
+                                        class="col-md-3 d-flex align-items-end"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn btn-dark w-100"
+                                        >
+                                            Check Status
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div
+                                id="pnr-result"
+                                class="mt-4"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section
+            id="features-section"
+            class="features-section py-5"
+        >
+            <div class="container">
+                <div class="section-heading text-center mb-5">
+                    <span class="section-label">
+                        Database-first engineering
+                    </span>
+                    <h2 class="fw-bold">
+                        What makes this system different?
+                    </h2>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card h-100">
+                            <i class="bi bi-diagram-3 feature-icon"></i>
+                            <h4>Segment allocation</h4>
+                            <p>
+                                A seat can be reused across
+                                non-overlapping portions of the same
+                                train journey.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card h-100">
+                            <i class="bi bi-shield-lock feature-icon"></i>
+                            <h4>Concurrent safety</h4>
+                            <p>
+                                Transactions, row locking and unique
+                                constraints prevent double booking.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card h-100">
+                            <i class="bi bi-clock-history feature-icon"></i>
+                            <h4>Booking history</h4>
+                            <p>
+                                Every confirmation and cancellation is
+                                recorded for traceability.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer py-4">
+        <div class="container text-center">
+            <p class="mb-0">
+                RailReserve — Node.js, Express and MySQL
+            </p>
+        </div>
+    </footer>
+    <div
+        class="modal fade"
+        id="booking-modal"
+        tabindex="-1"
+    >
+        <div
+            class="modal-dialog modal-dialog-centered modal-lg"
+        >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title">
+                            Reserve your seat
+                        </h5>
+                        <small
+                            id="booking-summary"
+                            class="text-muted"
+                        ></small>
+                    </div>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+                </div>
+                <form id="booking-form">
+                    <div class="modal-body">
+                        <input
+                            type="hidden"
+                            id="booking-run-id"
+                        >
+                        <input
+                            type="hidden"
+                            id="booking-source"
+                        >
+                        <input
+                            type="hidden"
+                            id="booking-destination"
+                        >
+                        <input
+                            type="hidden"
+                            id="booking-coach-type"
+                        >
+                        <div
+                            id="booking-message"
+                            class="mb-3"
+                        ></div>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label
+                                    for="booking-user-id"
+                                    class="form-label"
+                                >
+                                    User ID
+                                </label>
+                                <input
+                                    type="number"
+                                    id="booking-user-id"
+                                    class="form-control"
+                                    value="1"
+                                    min="1"
+                                    required
+                                >
+                            </div>
+                            <div class="col-md-9">
+                                <label
+                                    for="passenger-name"
+                                    class="form-label"
+                                >
+                                    Passenger name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="passenger-name"
+                                    class="form-control"
+                                    required
+                                >
+                            </div>
+                            <div class="col-md-6">
+                                <label
+                                    for="passenger-age"
+                                    class="form-label"
+                                >
+                                    Age
+                                </label>
+                                <input
+                                    type="number"
+                                    id="passenger-age"
+                                    class="form-control"
+                                    min="1"
+                                    max="120"
+                                    required
+                                >
+                            </div>
+                            <div class="col-md-6">
+                                <label
+                                    for="passenger-gender"
+                                    class="form-label"
+                                >
+                                    Gender
+                                </label>
+                                <select
+                                    id="passenger-gender"
+                                    class="form-select"
+                                    required
+                                >
+                                    <option value="">
+                                        Select gender
+                                    </option>
+                                    <option value="MALE">
+                                        Male
+                                    </option>
+                                    <option value="FEMALE">
+                                        Female
+                                    </option>
+                                    <option value="OTHER">
+                                        Other
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            <i class="bi bi-ticket-perforated me-2"></i>
+                            Confirm Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
