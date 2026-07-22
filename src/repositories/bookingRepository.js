@@ -414,6 +414,95 @@ async function addCancellationHistory(
         ]
     );
 }
+async function findBookingDetailsByPnr(pnr) {
+    const [bookingRows] = await pool.execute(
+        `
+        SELECT
+            b.booking_id,
+            b.pnr,
+            b.user_id,
+            b.booking_status,
+            b.total_fare,
+            b.booked_at,
+            b.cancelled_at,
+            tr.journey_date,
+            tr.run_status,
+            t.train_number,
+            t.train_name,
+            source_station.station_code AS source_code,
+            source_station.station_name AS source_name,
+            destination_station.station_code
+                AS destination_code,
+            destination_station.station_name
+                AS destination_name
+        FROM bookings AS b
+        JOIN train_runs AS tr
+            ON tr.run_id = b.run_id
+        JOIN trains AS t
+            ON t.train_id = tr.train_id
+        JOIN train_stops AS source_stop
+            ON source_stop.train_stop_id =
+               b.source_stop_id
+        JOIN stations AS source_station
+            ON source_station.station_id =
+               source_stop.station_id
+        JOIN train_stops AS destination_stop
+            ON destination_stop.train_stop_id =
+               b.destination_stop_id
+        JOIN stations AS destination_station
+            ON destination_station.station_id =
+               destination_stop.station_id
+        WHERE b.pnr = ?
+        LIMIT 1
+        `,
+        [pnr]
+    );
+    const booking = bookingRows[0];
+    if (!booking) {
+        return null;
+    }
+    const [passengers] = await pool.execute(
+        `
+        SELECT
+            passenger.passenger_id,
+            passenger.full_name,
+            passenger.age,
+            passenger.gender,
+            passenger.passenger_status,
+            passenger.fare,
+            coach.coach_number,
+            coach.coach_type,
+            seat.seat_number,
+            seat.berth_type
+        FROM booking_passengers AS passenger
+        LEFT JOIN seats AS seat
+            ON seat.seat_id = passenger.seat_id
+        LEFT JOIN coaches AS coach
+            ON coach.coach_id = seat.coach_id
+        WHERE passenger.booking_id = ?
+        ORDER BY passenger.passenger_id
+        `,
+        [booking.booking_id]
+    );
+    const [statusHistory] = await pool.execute(
+        `
+        SELECT
+            old_status,
+            new_status,
+            change_reason,
+            changed_at
+        FROM booking_status_history
+        WHERE booking_id = ?
+        ORDER BY changed_at, history_id
+        `,
+        [booking.booking_id]
+    );
+    return {
+        ...booking,
+        passengers,
+        statusHistory
+    };
+}
 module.exports = {
     pool,
     findUser,
@@ -428,5 +517,7 @@ module.exports = {
     cancelSeatReservations,
     cancelPassengers,
     cancelBookingRecord,
-    addCancellationHistory
+    addCancellationHistory,
+    findBookingDetailsByPnr
 };
+

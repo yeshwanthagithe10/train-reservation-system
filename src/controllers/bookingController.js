@@ -13,6 +13,23 @@ async function createBooking(req, res, next) {
         next(error);
     }
 }
+async function getBookingByPnr(req, res, next) {
+    try {
+        const { pnr } = req.params;
+        const { userId } = req.query;
+        const booking =
+            await bookingService.getBookingByPnr(
+                pnr,
+                userId
+            );
+        res.status(200).json({
+            success: true,
+            booking
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 async function cancelBooking(req, res, next) {
     try {
         const { pnr } = req.params;
@@ -32,5 +49,6 @@ async function cancelBooking(req, res, next) {
 }
 module.exports = {
     createBooking,
+    getBookingByPnr,
     cancelBooking
 };

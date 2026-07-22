@@ -419,8 +419,85 @@ async function cancelBooking(pnrValue, input) {
         connection.release();
     }
 }
+async function getBookingByPnr(pnrValue, userIdValue) {
+    const pnr = pnrValue?.trim().toUpperCase();
+    const userId = Number(userIdValue);
+    if (!pnr || pnr.length > 20) {
+        throw createHttpError(
+            "A valid PNR is required",
+            400
+        );
+    }
+    if (!Number.isInteger(userId) || userId <= 0) {
+        throw createHttpError(
+            "User ID must be a positive integer",
+            400
+        );
+    }
+    const booking =
+        await bookingRepository.findBookingDetailsByPnr(
+            pnr
+        );
+    if (!booking) {
+        throw createHttpError(
+            "Booking was not found",
+            404
+        );
+    }
+    if (Number(booking.user_id) !== userId) {
+        throw createHttpError(
+            "You are not allowed to view this booking",
+            403
+        );
+    }
+    return {
+        bookingId: booking.booking_id,
+        pnr: booking.pnr,
+        bookingStatus: booking.booking_status,
+        totalFare: Number(booking.total_fare),
+        bookedAt: booking.booked_at,
+        cancelledAt: booking.cancelled_at,
+        trainNumber: booking.train_number,
+        trainName: booking.train_name,
+        journeyDate: booking.journey_date,
+        runStatus: booking.run_status,
+        source: {
+            code: booking.source_code,
+            name: booking.source_name
+        },
+        destination: {
+            code: booking.destination_code,
+            name: booking.destination_name
+        },
+        passengers: booking.passengers.map(
+            (passenger) => ({
+                passengerId: passenger.passenger_id,
+                fullName: passenger.full_name,
+                age: passenger.age,
+                gender: passenger.gender,
+                passengerStatus:
+                    passenger.passenger_status,
+                fare: Number(passenger.fare),
+                coachNumber: passenger.coach_number,
+                coachType: passenger.coach_type,
+                seatNumber: passenger.seat_number,
+                berthType: passenger.berth_type
+            })
+        ),
+        statusHistory: booking.statusHistory.map(
+            (history) => ({
+                oldStatus: history.old_status,
+                newStatus: history.new_status,
+                reason: history.change_reason,
+                changedAt: history.changed_at
+            })
+        )
+    };
+}
 module.exports = {
     createBooking,
-    cancelBooking
+    cancelBooking,
+    getBookingByPnr
 };
+
 
