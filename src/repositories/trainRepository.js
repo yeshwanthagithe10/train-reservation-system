@@ -48,6 +48,94 @@ async function findTrainsByRouteAndDate(
     ]);
     return rows;
 }
+async function findJourneyContext(
+    runId,
+    sourceCode,
+    destinationCode
+) {
+    const query = `
+        SELECT
+            tr.run_id,
+            tr.train_id,
+            tr.journey_date,
+            tr.run_status,
+            source_stop.train_stop_id AS source_stop_id,
+            source_stop.stop_sequence AS source_sequence,
+            destination_stop.train_stop_id AS destination_stop_id,
+            destination_stop.stop_sequence AS destination_sequence
+        FROM train_runs AS tr
+        JOIN train_stops AS source_stop
+            ON source_stop.train_id = tr.train_id
+        JOIN stations AS source_station
+            ON source_station.station_id = source_stop.station_id
+        JOIN train_stops AS destination_stop
+            ON destination_stop.train_id = tr.train_id
+        JOIN stations AS destination_station
+            ON destination_station.station_id =
+               destination_stop.station_id
+        WHERE tr.run_id = ?
+          AND source_station.station_code = ?
+          AND destination_station.station_code = ?
+          AND source_stop.stop_sequence <
+              destination_stop.stop_sequence
+        LIMIT 1
+    `;
+    const [rows] = await pool.execute(query, [
+        runId,
+        sourceCode,
+        destinationCode
+    ]);
+    return rows[0] || null;
+}
+async function findAvailableSeats(
+    runId,
+    trainId,
+    sourceSequence,
+    destinationSequence,
+    coachType
+) {
+    const query = `
+        SELECT
+            s.seat_id,
+            c.coach_id,
+            c.coach_number,
+            c.coach_type,
+            s.seat_number,
+            s.berth_type
+        FROM coaches AS c
+        JOIN seats AS s
+            ON s.coach_id = c.coach_id
+        WHERE c.train_id = ?
+          AND c.coach_type = ?
+          AND NOT EXISTS (
+              SELECT 1
+              FROM seat_segment_reservations AS reservation
+              JOIN route_segments AS segment
+                  ON segment.segment_id = reservation.segment_id
+              WHERE reservation.run_id = ?
+                AND reservation.seat_id = s.seat_id
+                AND reservation.reservation_status = 'CONFIRMED'
+                AND segment.train_id = ?
+                AND segment.segment_sequence >= ?
+                AND segment.segment_sequence < ?
+          )
+        ORDER BY
+            c.coach_number,
+            CAST(s.seat_number AS UNSIGNED),
+            s.seat_number
+    `;
+    const [rows] = await pool.execute(query, [
+        trainId,
+        coachType,
+        runId,
+        trainId,
+        sourceSequence,
+        destinationSequence
+    ]);
+    return rows;
+}
 module.exports = {
-    findTrainsByRouteAndDate
+    findTrainsByRouteAndDate,
+    findJourneyContext,
+    findAvailableSeats
 };

@@ -16,6 +16,26 @@ async function searchTrains(req, res, next) {
         next(error);
     }
 }
+async function getSeatAvailability(req, res, next) {
+    try {
+        const { runId } = req.params;
+        const { source, destination, coachType } = req.query;
+        const availability =
+            await trainService.getSeatAvailability(
+                runId,
+                source,
+                destination,
+                coachType
+            );
+        res.status(200).json({
+            success: true,
+            ...availability
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
-    searchTrains
+    searchTrains,
+    getSeatAvailability
 };
