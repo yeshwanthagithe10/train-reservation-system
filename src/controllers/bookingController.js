@@ -13,6 +13,24 @@ async function createBooking(req, res, next) {
         next(error);
     }
 }
+async function cancelBooking(req, res, next) {
+    try {
+        const { pnr } = req.params;
+        const cancellation =
+            await bookingService.cancelBooking(
+                pnr,
+                req.body
+            );
+        res.status(200).json({
+            success: true,
+            message: "Booking cancelled successfully",
+            cancellation
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
-    createBooking
+    createBooking,
+    cancelBooking
 };

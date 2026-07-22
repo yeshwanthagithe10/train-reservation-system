@@ -273,6 +273,147 @@ async function addBookingStatusHistory(
         [bookingId]
     );
 }
+async function findBookingByPnrForUpdate(
+    connection,
+    pnr
+) {
+    const [rows] = await connection.execute(
+        `
+        SELECT
+            b.booking_id,
+            b.pnr,
+            b.user_id,
+            b.run_id,
+            b.booking_status,
+            b.total_fare,
+            b.cancelled_at,
+            tr.journey_date,
+            tr.run_status,
+            t.train_number,
+            t.train_name,
+            source_station.station_code AS source_code,
+            destination_station.station_code
+                AS destination_code
+
+        FROM bookings AS b
+
+        JOIN train_runs AS tr
+            ON tr.run_id = b.run_id
+
+        JOIN trains AS t
+            ON t.train_id = tr.train_id
+
+        JOIN train_stops AS source_stop
+            ON source_stop.train_stop_id =
+               b.source_stop_id
+
+        JOIN stations AS source_station
+            ON source_station.station_id =
+               source_stop.station_id
+
+        JOIN train_stops AS destination_stop
+            ON destination_stop.train_stop_id =
+               b.destination_stop_id
+
+        JOIN stations AS destination_station
+            ON destination_station.station_id =
+               destination_stop.station_id
+
+        WHERE b.pnr = ?
+
+        LIMIT 1
+        FOR UPDATE
+        `,
+        [pnr]
+    );
+
+    return rows[0] || null;
+}
+
+async function cancelSeatReservations(
+    connection,
+    bookingId
+) {
+    const [result] = await connection.execute(
+        `
+        UPDATE seat_segment_reservations AS reservation
+
+        JOIN booking_passengers AS passenger
+            ON passenger.passenger_id =
+               reservation.passenger_id
+
+        SET
+            reservation.reservation_status =
+                'CANCELLED',
+            reservation.cancelled_at =
+                CURRENT_TIMESTAMP
+
+        WHERE passenger.booking_id = ?
+          AND reservation.reservation_status =
+              'CONFIRMED'
+        `,
+        [bookingId]
+    );
+
+    return result.affectedRows;
+}
+
+async function cancelPassengers(
+    connection,
+    bookingId
+) {
+    const [result] = await connection.execute(
+        `
+        UPDATE booking_passengers
+        SET passenger_status = 'CANCELLED'
+        WHERE booking_id = ?
+          AND passenger_status <> 'CANCELLED'
+        `,
+        [bookingId]
+    );
+
+    return result.affectedRows;
+}
+
+async function cancelBookingRecord(
+    connection,
+    bookingId
+) {
+    await connection.execute(
+        `
+        UPDATE bookings
+        SET
+            booking_status = 'CANCELLED',
+            cancelled_at = CURRENT_TIMESTAMP
+        WHERE booking_id = ?
+        `,
+        [bookingId]
+    );
+}
+
+async function addCancellationHistory(
+    connection,
+    bookingId,
+    oldStatus,
+    reason
+) {
+    await connection.execute(
+        `
+        INSERT INTO booking_status_history (
+            booking_id,
+            old_status,
+            new_status,
+            change_reason
+        )
+        VALUES (?, ?, 'CANCELLED', ?)
+        `,
+        [
+            bookingId,
+            oldStatus,
+            reason
+        ]
+    );
+}
 module.exports = {
     pool,
     findUser,
@@ -282,5 +423,10 @@ module.exports = {
     createPassenger,
     reserveJourneySegments,
     confirmBooking,
-    addBookingStatusHistory
+    addBookingStatusHistory,
+    findBookingByPnrForUpdate,
+    cancelSeatReservations,
+    cancelPassengers,
+    cancelBookingRecord,
+    addCancellationHistory
 };

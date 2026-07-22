@@ -318,6 +318,109 @@ async function createBooking(input) {
         connection.release();
     }
 }
+async function cancelBooking(pnrValue, input) {
+    const pnr = pnrValue?.trim().toUpperCase();
+    const userId = Number(input.userId);
+    const reason =
+        input.reason?.trim() ||
+        "Cancelled by passenger";
+    if (!pnr || pnr.length > 20) {
+        throw createHttpError(
+            "A valid PNR is required",
+            400
+        );
+    }
+    if (!Number.isInteger(userId) || userId <= 0) {
+        throw createHttpError(
+            "User ID must be a positive integer",
+            400
+        );
+    }
+    if (reason.length > 255) {
+        throw createHttpError(
+            "Cancellation reason cannot exceed 255 characters",
+            400
+        );
+    }
+    const connection =
+        await bookingRepository.pool.getConnection();
+    try {
+        await connection.beginTransaction();
+        const booking =
+            await bookingRepository
+                .findBookingByPnrForUpdate(
+                    connection,
+                    pnr
+                );
+        if (!booking) {
+            throw createHttpError(
+                "Booking was not found",
+                404
+            );
+        }
+        if (Number(booking.user_id) !== userId) {
+            throw createHttpError(
+                "You are not allowed to cancel this booking",
+                403
+            );
+        }
+        if (booking.booking_status === "CANCELLED") {
+            throw createHttpError(
+                "This booking is already cancelled",
+                409
+            );
+        }
+        if (booking.booking_status !== "CONFIRMED") {
+            throw createHttpError(
+                "Only confirmed bookings can be cancelled",
+                409
+            );
+        }
+        const cancelledSegmentCount =
+            await bookingRepository
+                .cancelSeatReservations(
+                    connection,
+                    booking.booking_id
+                );
+        const cancelledPassengerCount =
+            await bookingRepository
+                .cancelPassengers(
+                    connection,
+                    booking.booking_id
+                );
+        await bookingRepository.cancelBookingRecord(
+            connection,
+            booking.booking_id
+        );
+        await bookingRepository.addCancellationHistory(
+            connection,
+            booking.booking_id,
+            booking.booking_status,
+            reason
+        );
+        await connection.commit();
+        return {
+            bookingId: booking.booking_id,
+            pnr: booking.pnr,
+            bookingStatus: "CANCELLED",
+            trainNumber: booking.train_number,
+            trainName: booking.train_name,
+            journeyDate: booking.journey_date,
+            source: booking.source_code,
+            destination: booking.destination_code,
+            cancelledPassengerCount,
+            releasedSegmentCount: cancelledSegmentCount,
+            cancellationReason: reason
+        };
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
 module.exports = {
-    createBooking
+    createBooking,
+    cancelBooking
 };
+
