@@ -4,6 +4,7 @@ const express = require("express");
 const pool = require("./src/config/db");
 const pageRoutes = require("./src/routes/pageRoutes");
 const trainRoutes = require("./src/routes/trainRoutes");
+const stationRoutes = require("./src/routes/stationRoutes");
 const bookingRoutes =
     require("./src/routes/bookingRoutes");
 const app = express();
@@ -21,6 +22,7 @@ app.use(
     )
 );
 app.use("/", pageRoutes);
+app.use("/api/stations", stationRoutes);
 app.use("/api/trains", trainRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.get("/health", async (req, res) => {
@@ -82,3 +84,4 @@ app.listen(PORT, () => {
         `Server running at http://localhost:${PORT}`
     );
 });
+

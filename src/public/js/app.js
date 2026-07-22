@@ -60,7 +60,34 @@ const journeyDateInput =
 journeyDateInput.value = getDefaultJourneyDate();
 journeyDateInput.min =
     new Date().toISOString().slice(0, 10);
-searchForm.addEventListener("submit", async (event) => {
+async function loadStations() {
+    const stationList =
+        document.getElementById("station-list");
+    try {
+        const response = await fetch("/api/stations");
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Unable to load stations"
+            );
+        }
+        stationList.innerHTML = "";
+        data.stations.forEach((station) => {
+            const option =
+                document.createElement("option");
+            option.value = station.station_code;
+            option.label =
+                `${station.station_name}, ${station.city}`;
+            stationList.appendChild(option);
+        });
+    } catch (error) {
+        console.error(
+            "Station loading failed:",
+            error.message
+        );
+    }
+}
+loadStations();searchForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const source =
         document.getElementById("source")
@@ -638,3 +665,4 @@ async function cancelBooking(pnr, userId) {
         );
     }
 }
+
