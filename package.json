@@ -1,0 +1,23 @@
+{
+  "name": "train-reservation-system",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo Tests will be added later",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "SQL-focused train reservation system",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
