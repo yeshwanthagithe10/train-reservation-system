@@ -1,6 +1,7 @@
 ﻿require("dotenv").config();
 const express = require("express");
 const pool = require("./src/config/db");
+const trainRoutes = require("./src/routes/trainRoutes");
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
@@ -30,6 +31,20 @@ app.get("/health", async (req, res) => {
             database: "disconnected"
         });
     }
+});
+app.use("/api/trains", trainRoutes);
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found"
+    });
+});
+app.use((error, req, res, next) => {
+    console.error(error);
+    res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal server error"
+    });
 });
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
