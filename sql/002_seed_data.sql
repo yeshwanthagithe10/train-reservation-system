@@ -246,3 +246,20 @@ VALUES
     (@ac_coach_id, '7', 'SIDE_LOWER'),
     (@ac_coach_id, '8', 'SIDE_UPPER');
 COMMIT;
+-- =========================================================
+-- DEVELOPMENT PASSENGER
+-- Used only while building the booking API.
+-- Authentication will be implemented later.
+-- =========================================================
+INSERT IGNORE INTO users (
+    full_name,
+    email,
+    password_hash,
+    role
+)
+VALUES (
+    'Demo Passenger',
+    'demo.passenger@local.test',
+    'DEVELOPMENT_ONLY_NO_LOGIN',
+    'PASSENGER'
+);
