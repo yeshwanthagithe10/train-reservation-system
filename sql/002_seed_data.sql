@@ -194,4 +194,55 @@ VALUES (
     'SCHEDULED'
 );
 
+COMMIT;-- =========================================================
+-- SAMPLE COACHES AND SEATS
+-- =========================================================
+START TRANSACTION;
+SET @train_id = (
+    SELECT train_id
+    FROM trains
+    WHERE train_number = '90001'
+);
+INSERT IGNORE INTO coaches (
+    train_id,
+    coach_number,
+    coach_type
+)
+VALUES
+    (@train_id, 'S1', 'SLEEPER'),
+    (@train_id, 'B1', 'AC_3_TIER');
+SET @sleeper_coach_id = (
+    SELECT coach_id
+    FROM coaches
+    WHERE train_id = @train_id
+      AND coach_number = 'S1'
+);
+SET @ac_coach_id = (
+    SELECT coach_id
+    FROM coaches
+    WHERE train_id = @train_id
+      AND coach_number = 'B1'
+);
+INSERT IGNORE INTO seats (
+    coach_id,
+    seat_number,
+    berth_type
+)
+VALUES
+    (@sleeper_coach_id, '1', 'LOWER'),
+    (@sleeper_coach_id, '2', 'MIDDLE'),
+    (@sleeper_coach_id, '3', 'UPPER'),
+    (@sleeper_coach_id, '4', 'LOWER'),
+    (@sleeper_coach_id, '5', 'MIDDLE'),
+    (@sleeper_coach_id, '6', 'UPPER'),
+    (@sleeper_coach_id, '7', 'SIDE_LOWER'),
+    (@sleeper_coach_id, '8', 'SIDE_UPPER'),
+    (@ac_coach_id, '1', 'LOWER'),
+    (@ac_coach_id, '2', 'MIDDLE'),
+    (@ac_coach_id, '3', 'UPPER'),
+    (@ac_coach_id, '4', 'LOWER'),
+    (@ac_coach_id, '5', 'MIDDLE'),
+    (@ac_coach_id, '6', 'UPPER'),
+    (@ac_coach_id, '7', 'SIDE_LOWER'),
+    (@ac_coach_id, '8', 'SIDE_UPPER');
 COMMIT;
