@@ -16,10 +16,35 @@ async function findTrainsByRouteAndDate(
             source_station.station_name AS source_name,
             source_stop.departure_time,
             source_stop.day_offset AS source_day_offset,
+            DATE_ADD(
+                tr.journey_date,
+                INTERVAL source_stop.day_offset DAY
+            ) AS departure_date,
             destination_station.station_code AS destination_code,
             destination_station.station_name AS destination_name,
             destination_stop.arrival_time,
             destination_stop.day_offset AS destination_day_offset,
+            DATE_ADD(
+                tr.journey_date,
+                INTERVAL destination_stop.day_offset DAY
+            ) AS arrival_date,
+            TIMESTAMPDIFF(
+                MINUTE,
+                TIMESTAMP(
+                    DATE_ADD(
+                        tr.journey_date,
+                        INTERVAL source_stop.day_offset DAY
+                    ),
+                    source_stop.departure_time
+                ),
+                TIMESTAMP(
+                    DATE_ADD(
+                        tr.journey_date,
+                        INTERVAL destination_stop.day_offset DAY
+                    ),
+                    destination_stop.arrival_time
+                )
+            ) AS duration_minutes,
             destination_stop.distance_from_origin_km
                 - source_stop.distance_from_origin_km AS distance_km
         FROM train_runs AS tr
@@ -139,3 +164,4 @@ module.exports = {
     findJourneyContext,
     findAvailableSeats
 };
+

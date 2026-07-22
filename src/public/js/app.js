@@ -32,6 +32,47 @@ function formatCurrency(value) {
         maximumFractionDigits: 2
     }).format(Number(value));
 }
+function formatTime(value) {
+    if (!value) {
+        return "-";
+    }
+    return String(value).slice(0, 5);
+}
+function formatDate(value) {
+    if (!value) {
+        return "-";
+    }
+    const date = new Date(`${value}T00:00:00`);
+    return new Intl.DateTimeFormat("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    }).format(date);
+}
+function formatDuration(minutes) {
+    const totalMinutes = Number(minutes);
+    if (!Number.isFinite(totalMinutes)) {
+        return "-";
+    }
+    const hours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = totalMinutes % 60;
+    if (remainingMinutes === 0) {
+        return `${hours}h`;
+    }
+    return `${hours}h ${remainingMinutes}m`;
+}
+function getArrivalDayLabel(train) {
+    const dayDifference =
+        Number(train.destination_day_offset) -
+        Number(train.source_day_offset);
+    if (dayDifference <= 0) {
+        return "Same day";
+    }
+    if (dayDifference === 1) {
+        return "Next day";
+    }
+    return `+${dayDifference} days`;
+}
 function showAlert(container, type, message) {
     container.innerHTML = `
         <div class="alert alert-${type}" role="alert">
@@ -170,22 +211,37 @@ function renderTrainResults(
                     >
                         <div class="journey-stop">
                             <strong>
-                                ${escapeHtml(train.departure_time)}
+                                ${formatTime(train.departure_time)}
                             </strong>
                             <span>
                                 ${escapeHtml(train.source_code)}
                                 — ${escapeHtml(train.source_name)}
                             </span>
+                            <small class="journey-date">
+                                ${formatDate(train.departure_date)}
+                            </small>
                         </div>
-                        <div class="journey-line"></div>
+                        <div class="journey-line">
+                            <span class="journey-duration">
+                                ${formatDuration(
+                                    train.duration_minutes
+                                )}
+                            </span>
+                        </div>
                         <div class="journey-stop text-md-end">
                             <strong>
-                                ${escapeHtml(train.arrival_time)}
+                                ${formatTime(train.arrival_time)}
                             </strong>
                             <span>
                                 ${escapeHtml(train.destination_code)}
                                 — ${escapeHtml(train.destination_name)}
                             </span>
+                            <small class="journey-date">
+                                ${formatDate(train.arrival_date)}
+                                <span class="day-indicator">
+                                    ${getArrivalDayLabel(train)}
+                                </span>
+                            </small>
                         </div>
                     </div>
                     <div
@@ -194,7 +250,9 @@ function renderTrainResults(
                         <div>
                             <span class="me-3">
                                 <i class="bi bi-calendar-event me-1"></i>
-                                ${escapeHtml(train.journey_date)}
+                                ${formatDate(train.departure_date)}
+                                →
+                                ${formatDate(train.arrival_date)}
                             </span>
                             <span>
                                 <i class="bi bi-signpost-2 me-1"></i>
@@ -665,4 +723,5 @@ async function cancelBooking(pnr, userId) {
         );
     }
 }
+
 

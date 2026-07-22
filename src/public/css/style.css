@@ -252,3 +252,31 @@ body {
         flex-direction: column;
     }
 }
+.journey-duration {
+    background: white;
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    left: 50%;
+    padding: 0 0.55rem;
+    position: absolute;
+    top: -0.65rem;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+.journey-date {
+    color: #6c757d;
+    display: block;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+.day-indicator {
+    background: #e7f3ff;
+    border-radius: 1rem;
+    color: var(--primary);
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: 0.3rem;
+    padding: 0.15rem 0.45rem;
+}
